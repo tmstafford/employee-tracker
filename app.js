@@ -11,6 +11,18 @@ const connection = mysql.createConnection({
 });
 
 // test query
-connection.query('SELECT * FROM employee', function(err, res) {
-    console.log(res);
+//connection.query('SELECT * FROM employee', function(err, res) {
+//    console.table(res);
+//});
+
+connection.connect(function(err) {
+    if (err) {
+        console.log('Error connecting to DB');
+        return;
+    }
+    console.log(`
+    ----------------
+    EMPLOYEE TRACKER
+    ----------------
+    `);
 });
