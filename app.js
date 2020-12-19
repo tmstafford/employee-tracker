@@ -59,6 +59,9 @@ function promptMenu() {
             case 'Add Role':
                 addRole();
                 break;
+            case 'Add Employee':
+                addEmployee();
+                break;
         }
     })
 };
@@ -151,3 +154,59 @@ function addRole() {
         });
     });
 };
+
+// function to add new employee (first name, last name, role title, manager) and add to database
+function addEmployee() {
+    let roleChoices = [];
+    connection.query("SELECT id, title FROM role", (err, res) => {
+        if (err) throw err;
+        res.forEach((element) => {
+            roleChoices.push(`${element.id} ${element.title}`);
+        });
+
+        let managerChoices = [];
+        connection.query("SELECT id, first_name, last_name FROM employee", (err, res) => {
+            if (err) throw err;
+            res.forEach((element) => {
+                managerChoices.push(`${element.id} ${element.first_name} ${element.last_name}`);
+            });
+
+            inquirer.prompt([
+                {
+                    type: 'input',
+                    name: 'firstName',
+                    message: "Enter the employee's first name:"
+                },
+                {
+                    type: 'input',
+                    name: 'lastName',
+                    message: "Enter the employee's last name:"
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: "Select the employee's role:",
+                    choices: roleChoices
+                },
+                {
+                    type: 'list',
+                    name: 'manager',
+                    message: "Select the employee's manager:",
+                    choices: managerChoices
+                }
+            ])
+            .then((answers) => {
+                let roleId = parseInt(answers.role);
+                let managerId = parseInt(answers.manager);
+                const sql = "INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)";
+                const params = [answers.firstName, answers.lastName, roleId, managerId];
+                connection.query(sql, params, (err, res) => {
+                    if (err) throw err;
+                    console.log(`Added New Employee: ${answers.firstName} ${answers.lastName}`);
+                    promptMenu();
+                });
+            });
+        });
+    });
+};
+
