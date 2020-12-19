@@ -20,37 +20,9 @@ connection.connect(function(err) {
     EMPLOYEE TRACKER
     ----------------
     `);
+    promptMenu();
 });
 
-function viewEmployees() {
-    const sql = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name AS department, CONCAT(e.first_name, ' ', e.last_name) AS manager FROM employee INNER JOIN role ON role.id = employee.role_id INNER JOIN department ON department.id = role.department_id LEFT JOIN employee e ON employee.manager_id = e.id;";
-    connection.query(sql, (err, res) => {
-        if (err) throw err;
-        console.table(res);
-    });
-};
-
-function viewRoles() {
-    const sql = "SELECT role.id, role.title, role.salary, department.name AS department FROM role INNER JOIN department ON role.department_id = department.id;";
-    connection.query(sql, (err, res) => {
-        if (err) throw err;
-        console.table(res);
-    });
-};
-
-function viewDepartments() {
-    const sql = "SELECT * FROM department;";
-    connection.query(sql, (err, res) => {
-        if (err) throw err;
-        console.table(res);
-    });
-};
-
-viewDepartments();
-
-
-
-/*
 function promptMenu() {
     // main menu user prompt options, called after most functions 
     inquirer.prompt([
@@ -73,8 +45,67 @@ function promptMenu() {
         // switch case depending on user choice to run specific function
         switch (answer.menu) {
             case 'View All Employees':
-
+                viewEmployees();
+                break;
+            case 'View All Roles':
+                viewRoles();
+                break;
+            case 'View All Departments':
+                viewDepartments();
+                break;
+            case 'Add Department':
+                addDepartment();
+                break;
         }
     })
-}
-*/
+};
+
+// function to view table of all employees
+function viewEmployees() {
+    const sql = "SELECT employee.id, employee.first_name, employee.last_name, role.title, role.salary, department.name AS department, CONCAT(e.first_name, ' ', e.last_name) AS manager FROM employee INNER JOIN role ON role.id = employee.role_id INNER JOIN department ON department.id = role.department_id LEFT JOIN employee e ON employee.manager_id = e.id;";
+    connection.query(sql, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        promptMenu();
+    });
+};
+
+// function to view table of all roles
+function viewRoles() {
+    const sql = "SELECT role.id, role.title, role.salary, department.name AS department FROM role INNER JOIN department ON role.department_id = department.id;";
+    connection.query(sql, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        promptMenu();
+    });
+};
+
+// function to view table of all departments
+function viewDepartments() {
+    const sql = "SELECT * FROM department;";
+    connection.query(sql, (err, res) => {
+        if (err) throw err;
+        console.table(res);
+        promptMenu();
+    });
+};
+
+// function to add a department and add to database
+function addDepartment() {
+    inquirer.prompt([
+        {
+            type: 'input',
+            name: 'departmentName',
+            message: 'Enter Department Name: '
+        }
+    ])
+    .then((answer) => {
+        const sql = "INSERT INTO department (name) VALUES (?)";
+        const params = [answer.departmentName];
+        connection.query(sql, params, (err, res) => {
+            if (err) throw err;
+            console.log(`Added New Department: ${answer.departmentName}.`)
+            promptMenu();
+        });
+    })
+};
