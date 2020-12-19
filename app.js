@@ -56,6 +56,9 @@ function promptMenu() {
             case 'Add Department':
                 addDepartment();
                 break;
+            case 'Add Role':
+                addRole();
+                break;
         }
     })
 };
@@ -108,4 +111,43 @@ function addDepartment() {
             promptMenu();
         });
     })
+};
+
+// function to add a role (role title, salary, department) and add to database
+function addRole() {
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+        const departmentList = res.map(({ id, name }) => ({
+            value: id,
+            name: `${id} ${name}`
+        }));
+
+        inquirer.prompt([
+            {
+                type: 'input',
+                name: 'roleName',
+                message: 'Enter Role Title: '
+            },
+            {
+                type: 'input',
+                name: 'roleSalary',
+                message: 'Enter Role Salary: '
+            },
+            {
+                type: 'list',
+                name: 'roleDepartment',
+                message: 'Select the Department:',
+                choices: departmentList
+            }
+        ])
+        .then((answers) => {
+            const sql = "INSERT INTO role (title, salary, department_id) VALUES (?,?,?)";
+            const params = [answers.roleName, answers.roleSalary, answers.roleDepartment];
+            connection.query(sql, params, (err, res) => {
+                if (err) throw err;
+                console.log(`Added New Role: ${answers.roleName}.`);
+                promptMenu();
+            });
+        });
+    });
 };
