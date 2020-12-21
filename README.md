@@ -3,6 +3,8 @@
 ## Description
 Employee Tracker is a command line application built to manage a comapny's employee database. Using SQL, users can view and manage employee records stored in the database. Users can view all employees, all roles, and all departments, and add a role, add a department, and add an employee. Users can also update an employee's role or manager and remove an employee, remove a department, and remove a role. The user can access all attributes and edit the employee database directly from the command line. 
 
+![Untitled_ Dec 20, 2020 7_26 PM](https://user-images.githubusercontent.com/70179648/102733018-698bed80-42f9-11eb-8ed0-25134a6f5186.gif)
+
 **See the [Sample Video Link](https://drive.google.com/file/d/1IqqEn6MRA66p_W4bNOvmHmgOqCV-ndSX/view)**
 
 
